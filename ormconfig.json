@@ -1,0 +1,24 @@
+{
+   "type": "mysql",
+   "host": "localhost",
+   "port": 3306,
+   "username": "root",
+   "password": "GBP@ck3rs#1",
+   "database": "wkohfatracking2",
+   "synchronize": true,
+   "logging": false,
+   "entities": [
+      "build/data/entity/**/*.js"
+   ],
+   "migrations": [
+      "build/data/migration/**/*.js"
+   ],
+   "subscribers": [
+      "build/data/subscriber/**/*.js"
+   ],
+   "cli": {
+      "entitiesDir": "src/data/entity",
+      "migrationsDir": "src/data/migration",
+      "subscribersDir": "src/data/subscriber"
+   }
+}
