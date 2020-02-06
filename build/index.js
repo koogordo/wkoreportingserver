@@ -49,14 +49,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 var typeorm_1 = require("typeorm");
 var http_1 = require("http");
+var routes_1 = require("./routes");
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 var socketIo = __importStar(require("socket.io"));
 //controllers
-var VisitController_1 = __importDefault(require("./api/controllers/VisitController"));
-var QuestionController_1 = __importDefault(require("./api/controllers/QuestionController"));
-var SubQuestionController_1 = __importDefault(require("./api/controllers/SubQuestionController"));
-var ReportController_1 = __importDefault(require("./api/controllers/ReportController"));
 typeorm_1.createConnection()
     .then(function (connection) { return __awaiter(void 0, void 0, void 0, function () {
     var app, server, io, mainRouter;
@@ -73,10 +70,9 @@ typeorm_1.createConnection()
         app.use(express_1.default.json({ limit: '50mb' }));
         app.use(express_1.default.urlencoded({ extended: true }));
         // main subdomains
-        mainRouter.use('/visit', VisitController_1.default);
-        mainRouter.use('/question', QuestionController_1.default);
-        mainRouter.use('/sub_question', SubQuestionController_1.default);
-        mainRouter.use('/report', ReportController_1.default);
+        routes_1.configureRoutes(function (route) {
+            mainRouter.use(route.path, route.controller);
+        });
         app.use('/', mainRouter);
         server.listen(3001, function () {
             console.log('REPORTING SERVICE IS LISTENING ON 3001');

@@ -41,69 +41,78 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var typeorm_1 = require("typeorm");
-var VisitQuestionView_1 = require("../../data/entity/VisitQuestionView");
-var ReportController = express_1.default.Router();
-ReportController.get('/questions', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var vqs, i, parsedConditionString, conditionData, whereCondition, result;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, typeorm_1.getRepository(VisitQuestionView_1.VisitQuestion)
-                    .createQueryBuilder('vq')
-                    .where('vq.questionKey IN (:...cols)', { cols: req.query.cols })
-                // parse where conditions and add them to query
-            ];
-            case 1:
-                vqs = _a.sent();
-                // parse where conditions and add them to query
-                for (i = 0; i < req.query.conditions.length; i++) {
-                    parsedConditionString = req.query.conditions[i].split('|');
-                    conditionData = {};
-                    conditionData[parsedConditionString[0]] = isNaN(parsedConditionString[2])
-                        ? parsedConditionString[2]
-                        : Number.parseInt(parsedConditionString[2]);
-                    whereCondition = "vq." + parsedConditionString[0] + " " + parsedConditionString[1] + " :" + parsedConditionString[0];
-                    vqs = vqs.andWhere(whereCondition, conditionData);
-                }
-                return [4 /*yield*/, vqs.getRawMany()];
-            case 2:
-                result = _a.sent();
-                res.status(200).json(result);
-                return [2 /*return*/];
-        }
-    });
-}); });
-ReportController.post('/query', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var socketId, io, senderSocket, manager, result;
+var QueryController = express_1.default.Router();
+QueryController.post('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var socketId, io, senderSocket, manager, result, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 socketId = req.body.socketid;
                 io = req.app.get('socketio');
                 senderSocket = io.sockets.connected[socketId];
-                return [4 /*yield*/, typeorm_1.getManager()];
+                if (!senderSocket) return [3 /*break*/, 6];
+                _a.label = 1;
             case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, typeorm_1.getManager()];
+            case 2:
                 manager = _a.sent();
-                if (!senderSocket) return [3 /*break*/, 3];
                 res.status(200).json({
                     ok: true,
                     status: 200,
                     msg: 'query_started',
                 });
                 return [4 /*yield*/, manager.query(req.body.query)];
-            case 2:
-                result = _a.sent();
-                senderSocket.emit('msg', result);
-                return [3 /*break*/, 4];
             case 3:
+                result = _a.sent();
+                senderSocket.emit('query-result', result);
+                return [3 /*break*/, 5];
+            case 4:
+                e_1 = _a.sent();
+                senderSocket.emit('query-error', e_1);
+                return [3 /*break*/, 5];
+            case 5: return [3 /*break*/, 7];
+            case 6:
                 res.status(404).json({
                     ok: false,
                     status: 404,
                     msg: "Socket " + socketId + " was invalid or socket does not exist.",
                 });
-                _a.label = 4;
-            case 4: return [2 /*return*/];
+                _a.label = 7;
+            case 7: return [2 /*return*/];
         }
     });
 }); });
-exports.default = ReportController;
-//# sourceMappingURL=ReportController.js.map
+QueryController.get('/connection', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, e_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, typeorm_1.getConnection()];
+            case 1:
+                connection = _a.sent();
+                res.status(200).json({
+                    ok: true,
+                    status: 200,
+                    msg: 'connection_status',
+                    connectionInfo: {
+                        host: connection.options.host,
+                        port: connection.options.port,
+                    },
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                e_2 = _a.sent();
+                res.status(404).json({
+                    ok: false,
+                    status: 400,
+                    error: e_2,
+                });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+exports.default = QueryController;
+//# sourceMappingURL=QueryController.js.map
