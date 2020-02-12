@@ -36,41 +36,53 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var familyidLegacyclientidAddedToVisitEntity1580176811700 = /** @class */ (function () {
-    function familyidLegacyclientidAddedToVisitEntity1580176811700() {
-        this.name = 'familyidLegacyclientidAddedToVisitEntity1580176811700';
+var JSONInQuestionToText1581107164239 = /** @class */ (function () {
+    function JSONInQuestionToText1581107164239() {
+        this.name = 'JSONInQuestionToText1581107164239';
     }
-    familyidLegacyclientidAddedToVisitEntity1580176811700.prototype.up = function (queryRunner) {
+    JSONInQuestionToText1581107164239.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE `visit` ADD `familyID` int NOT NULL", undefined)];
+                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` DROP COLUMN `questionJSON`", undefined)];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `visit` ADD `legacyClientID` int NOT NULL", undefined)];
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` ADD `questionJSON` text NOT NULL", undefined)];
                     case 2:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` DROP COLUMN `inputJSON`", undefined)];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` ADD `inputJSON` text NOT NULL", undefined)];
+                    case 4:
                         _a.sent();
                         return [2 /*return*/];
                 }
             });
         });
     };
-    familyidLegacyclientidAddedToVisitEntity1580176811700.prototype.down = function (queryRunner) {
+    JSONInQuestionToText1581107164239.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE `visit` DROP COLUMN `legacyClientID`", undefined)];
+                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` DROP COLUMN `inputJSON`", undefined)];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `visit` DROP COLUMN `familyID`", undefined)];
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` ADD `inputJSON` varchar(5000) NOT NULL", undefined)];
                     case 2:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` DROP COLUMN `questionJSON`", undefined)];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` ADD `questionJSON` varchar(5000) NOT NULL", undefined)];
+                    case 4:
                         _a.sent();
                         return [2 /*return*/];
                 }
             });
         });
     };
-    return familyidLegacyclientidAddedToVisitEntity1580176811700;
+    return JSONInQuestionToText1581107164239;
 }());
-exports.familyidLegacyclientidAddedToVisitEntity1580176811700 = familyidLegacyclientidAddedToVisitEntity1580176811700;
-//# sourceMappingURL=1580176811700-familyid-legacyclientid-added-to-visit-entity.js.map
+exports.JSONInQuestionToText1581107164239 = JSONInQuestionToText1581107164239;
+//# sourceMappingURL=1581107164239-JSONInQuestionToText.js.map

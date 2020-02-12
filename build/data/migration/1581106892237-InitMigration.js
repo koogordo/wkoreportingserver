@@ -36,21 +36,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var initialDatabaseBuild1580061621851 = /** @class */ (function () {
-    function initialDatabaseBuild1580061621851() {
-        this.name = 'initialDatabaseBuild1580061621851';
+var InitMigration1581106892237 = /** @class */ (function () {
+    function InitMigration1581106892237() {
+        this.name = 'InitMigration1581106892237';
     }
-    initialDatabaseBuild1580061621851.prototype.up = function (queryRunner) {
+    InitMigration1581106892237.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, queryRunner.query("CREATE TABLE `sub_question` (`subQuestionID` int NOT NULL AUTO_INCREMENT, `parentQuestionKey` varchar(150) NOT NULL, `parentVisitVisitID` varchar(150) NOT NULL, `subQuestionQuestionKey` varchar(150) NOT NULL, `subQuestionVisitVisitID` varchar(150) NOT NULL, `createdAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), PRIMARY KEY (`subQuestionID`)) ENGINE=InnoDB", undefined)];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("CREATE TABLE `visit` (`visitID` varchar(150) NOT NULL, `visitType` varchar(50) NOT NULL, `clientID` varchar(75) NOT NULL, `visitDate` datetime NOT NULL, `visitOs` varchar(75) NOT NULL, `clientFullName` varchar(150) NOT NULL, `createdAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), PRIMARY KEY (`visitID`)) ENGINE=InnoDB", undefined)];
+                        return [4 /*yield*/, queryRunner.query("CREATE TABLE `visit` (`visitID` varchar(150) NOT NULL, `visitType` varchar(50) NOT NULL, `clientID` varchar(75) NOT NULL, `visitDate` datetime NOT NULL, `visitOs` varchar(75) NOT NULL, `clientFullName` varchar(150) NOT NULL, `familyID` int NOT NULL, `legacyClientID` int NOT NULL, `createdAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), PRIMARY KEY (`visitID`)) ENGINE=InnoDB", undefined)];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("CREATE TABLE `question` (`questionKey` varchar(150) NOT NULL, `visitVisitID` varchar(150) NOT NULL, `questionAnswer` text NOT NULL, `questionType` text NOT NULL, `formIndexJSON` json NOT NULL, `questionJSON` json NOT NULL, `inputJSON` json NOT NULL, `isSubQuestionFlg` tinyint NOT NULL, `hasSubQuestionFlg` tinyint NOT NULL, `createdAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), PRIMARY KEY (`questionKey`, `visitVisitID`)) ENGINE=InnoDB", undefined)];
+                        return [4 /*yield*/, queryRunner.query("CREATE TABLE `question` (`questionKey` varchar(150) NOT NULL, `visitVisitID` varchar(150) NOT NULL, `questionAnswer` varchar(2000) NOT NULL, `questionType` varchar(50) NOT NULL, `formIndexJSON` varchar(2000) NOT NULL, `questionJSON` varchar(5000) NOT NULL, `inputJSON` varchar(5000) NOT NULL, `isSubQuestionFlg` tinyint NOT NULL, `hasSubQuestionFlg` tinyint NOT NULL, `createdAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updatedAt` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), PRIMARY KEY (`questionKey`, `visitVisitID`)) ENGINE=InnoDB", undefined)];
                     case 3:
                         _a.sent();
                         return [4 /*yield*/, queryRunner.query("ALTER TABLE `sub_question` ADD CONSTRAINT `FK_a124345bd315a9d629866d88e86` FOREIGN KEY (`parentQuestionKey`, `parentVisitVisitID`) REFERENCES `question`(`questionKey`,`visitVisitID`) ON DELETE CASCADE ON UPDATE NO ACTION", undefined)];
@@ -59,36 +59,48 @@ var initialDatabaseBuild1580061621851 = /** @class */ (function () {
                         return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` ADD CONSTRAINT `FK_f17b62d6e7ade7e7d72f6ae29d6` FOREIGN KEY (`visitVisitID`) REFERENCES `visit`(`visitID`) ON DELETE CASCADE ON UPDATE NO ACTION", undefined)];
                     case 5:
                         _a.sent();
+                        return [4 /*yield*/, queryRunner.query("CREATE VIEW `visit_question` AS SELECT `visit`.`visitID` AS `visitID`, `visit`.`visitType` AS `visitType`, `visit`.`clientID` AS `clientID`, `visit`.`visitDate` AS `visitDate`, `visit`.`visitOs` AS `visitOs`, `visit`.`clientFullName` AS `clientFullName`, `question`.`questionKey` AS `questionKey`, `question`.`questionAnswer` AS `questionAnswer`, `question`.`questionType` AS `questionType`, `question`.`formIndexJSON` AS `formIndexJSON`, `question`.`questionJSON` AS `questionJSON`, `question`.`inputJSON` AS `inputJSON`, `question`.`isSubQuestionFlg` AS `isSubQuestionFlg`, `question`.`hasSubQuestionFlg` AS `hasSubQuestionFlg` FROM `visit` `visit` INNER JOIN `question` `question` ON `visit`.`visitID` = `question`.`visitVisitID`", undefined)];
+                    case 6:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("INSERT INTO `wkohfatracking3`.`typeorm_metadata`(`type`, `schema`, `name`, `value`) VALUES (?, ?, ?, ?)", ["VIEW", "wkohfatracking3", "visit_question", "SELECT `visit`.`visitID` AS `visitID`, `visit`.`visitType` AS `visitType`, `visit`.`clientID` AS `clientID`, `visit`.`visitDate` AS `visitDate`, `visit`.`visitOs` AS `visitOs`, `visit`.`clientFullName` AS `clientFullName`, `question`.`questionKey` AS `questionKey`, `question`.`questionAnswer` AS `questionAnswer`, `question`.`questionType` AS `questionType`, `question`.`formIndexJSON` AS `formIndexJSON`, `question`.`questionJSON` AS `questionJSON`, `question`.`inputJSON` AS `inputJSON`, `question`.`isSubQuestionFlg` AS `isSubQuestionFlg`, `question`.`hasSubQuestionFlg` AS `hasSubQuestionFlg` FROM `visit` `visit` INNER JOIN `question` `question` ON `visit`.`visitID` = `question`.`visitVisitID`"])];
+                    case 7:
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });
         });
     };
-    initialDatabaseBuild1580061621851.prototype.down = function (queryRunner) {
+    InitMigration1581106892237.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` DROP FOREIGN KEY `FK_f17b62d6e7ade7e7d72f6ae29d6`", undefined)];
+                    case 0: return [4 /*yield*/, queryRunner.query("DELETE FROM `wkohfatracking3`.`typeorm_metadata` WHERE `type` = 'VIEW' AND `schema` = ? AND `name` = ?", ["wkohfatracking3", "visit_question"])];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `sub_question` DROP FOREIGN KEY `FK_a124345bd315a9d629866d88e86`", undefined)];
+                        return [4 /*yield*/, queryRunner.query("DROP VIEW `visit_question`", undefined)];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE `question`", undefined)];
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `question` DROP FOREIGN KEY `FK_f17b62d6e7ade7e7d72f6ae29d6`", undefined)];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE `visit`", undefined)];
+                        return [4 /*yield*/, queryRunner.query("ALTER TABLE `sub_question` DROP FOREIGN KEY `FK_a124345bd315a9d629866d88e86`", undefined)];
                     case 4:
                         _a.sent();
-                        return [4 /*yield*/, queryRunner.query("DROP TABLE `sub_question`", undefined)];
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE `question`", undefined)];
                     case 5:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE `visit`", undefined)];
+                    case 6:
+                        _a.sent();
+                        return [4 /*yield*/, queryRunner.query("DROP TABLE `sub_question`", undefined)];
+                    case 7:
                         _a.sent();
                         return [2 /*return*/];
                 }
             });
         });
     };
-    return initialDatabaseBuild1580061621851;
+    return InitMigration1581106892237;
 }());
-exports.initialDatabaseBuild1580061621851 = initialDatabaseBuild1580061621851;
-//# sourceMappingURL=1580061621851-initial-database-build.js.map
+exports.InitMigration1581106892237 = InitMigration1581106892237;
+//# sourceMappingURL=1581106892237-InitMigration.js.map

@@ -32,10 +32,10 @@ export class Question {
     @Column('varchar', { length: 2000, unique: false })
     formIndexJSON!: string
 
-    @Column('varchar', { length: 5000, unique: false })
+    @Column('text')
     questionJSON!: string
 
-    @Column('varchar', { length: 5000, unique: false })
+    @Column('text')
     inputJSON!: string
 
     @Column()

@@ -12,6 +12,7 @@ import { Question } from './Question'
             .addSelect('visit.visitDate', 'visitDate')
             .addSelect('visit.visitOs', 'visitOs')
             .addSelect('visit.clientFullName', 'clientFullName')
+            .addSelect('visit.legacyClientID', 'legacyClientID')
             .addSelect('question.questionKey', 'questionKey')
             .addSelect('question.questionAnswer', 'questionAnswer')
             .addSelect('question.questionType', 'questionType')
@@ -45,6 +46,9 @@ export class VisitQuestion {
 
     @ViewColumn()
     clientFullName!: string
+
+    @ViewColumn()
+    legacyClientID!: string
 
     @ViewColumn()
     questionKey!: string

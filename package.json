@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.3.7",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
     "typescript": "^3.7.5"
@@ -31,6 +32,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "http": "0.0.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "memorystream": "^0.3.1",
     "mysql": "^2.18.1",

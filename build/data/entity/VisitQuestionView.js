@@ -42,6 +42,10 @@ var VisitQuestion = /** @class */ (function () {
     __decorate([
         typeorm_1.ViewColumn(),
         __metadata("design:type", String)
+    ], VisitQuestion.prototype, "legacyClientID", void 0);
+    __decorate([
+        typeorm_1.ViewColumn(),
+        __metadata("design:type", String)
     ], VisitQuestion.prototype, "questionKey", void 0);
     __decorate([
         typeorm_1.ViewColumn(),
@@ -82,6 +86,7 @@ var VisitQuestion = /** @class */ (function () {
                     .addSelect('visit.visitDate', 'visitDate')
                     .addSelect('visit.visitOs', 'visitOs')
                     .addSelect('visit.clientFullName', 'clientFullName')
+                    .addSelect('visit.legacyClientID', 'legacyClientID')
                     .addSelect('question.questionKey', 'questionKey')
                     .addSelect('question.questionAnswer', 'questionAnswer')
                     .addSelect('question.questionType', 'questionType')

@@ -47,27 +47,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
+var typeorm_1 = require("typeorm");
+var Question_1 = require("../../data/entity/Question");
 var WKODbAccess_1 = require("../../data/WKODbAccess");
 var config_1 = require("../../config");
 var workerpool = __importStar(require("workerpool"));
 var _ = __importStar(require("lodash"));
+var Visit_1 = require("../../data/entity/Visit");
+var SubQuestion_1 = require("../../data/entity/SubQuestion");
+var JwtMiddleware_1 = require("../../middleware/JwtMiddleware");
 var dao = new WKODbAccess_1.WKODbAccess(config_1.DbConfig);
 var TransferController = express_1.default.Router();
-var pool = workerpool.pool(__dirname + '/worker-scripts/processBatchWorker.js', {
-    minWorkers: 3,
-    maxWorkers: 3,
-    workerType: 'thread',
-});
-TransferController.post('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var socketId, io, senderSocket, templates_1, batches, workerPromises, parsedVisitInfo, visits, qs, subqs, i, j, e_1;
+TransferController.post('/', [JwtMiddleware_1.checkJwt, JwtMiddleware_1.checkRole('ADMIN')], function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var socketId, io, senderSocket, templates_1, batches, pool_1, workerPromises, parsedVisitInfo, visits, qs, subqs, i, j, visitInsertRes, questionInsertRes, subQuestionInsertRes, visitRepo, questionRepo, subQuestionRepo, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 socketId = req.body.socketid;
                 io = req.app.get('socketio');
                 senderSocket = io.sockets.connected[socketId];
-                if (!req.body.docs) return [3 /*break*/, 8];
-                if (!senderSocket) return [3 /*break*/, 6];
+                if (!req.body.docs) return [3 /*break*/, 14];
+                if (!senderSocket) return [3 /*break*/, 12];
                 res.status(200).json({
                     ok: true,
                     msg: 'transfer_process_was_initiated',
@@ -75,16 +75,22 @@ TransferController.post('/', function (req, res) { return __awaiter(void 0, void
                 });
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
+                _a.trys.push([1, 10, , 11]);
                 return [4 /*yield*/, dao
                         .forms()
                         .findAll({ include_docs: true })];
             case 2:
                 templates_1 = _a.sent();
                 batches = _.chunk(req.body.docs, 3);
-                workerPromises = batches.map(function (batch) {
-                    return pool.exec('processBatch', [batch, templates_1]);
+                pool_1 = workerpool.pool(__dirname +
+                    '/../../worker-scripts/processBatchWorker.js', {
+                    minWorkers: 3,
+                    maxWorkers: 3,
                 });
+                workerPromises = batches.map(function (batch) {
+                    return pool_1.exec('processBatch', [batch, templates_1]);
+                });
+                pool_1.terminate();
                 return [4 /*yield*/, Promise.all(workerPromises)];
             case 3:
                 parsedVisitInfo = _a.sent();
@@ -103,47 +109,59 @@ TransferController.post('/', function (req, res) { return __awaiter(void 0, void
                         }
                     }
                 }
-                // let visitInsertRes: InsertResult
-                // let questionInsertRes: InsertResult
-                // let subQuestionInsertRes: InsertResult
-                // const visitRepo = await getRepository(Visit)
-                // visitInsertRes = await visitRepo.insert(visits)
-                // const questionRepo = await getRepository(Question)
-                // questionInsertRes = await questionRepo.insert(qs)
-                // const subQuestionRepo = await getRepository(SubQuestion)
-                // subQuestionInsertRes = await subQuestionRepo.insert(subqs)
+                visitInsertRes = void 0;
+                questionInsertRes = void 0;
+                subQuestionInsertRes = void 0;
+                return [4 /*yield*/, typeorm_1.getRepository(Visit_1.Visit)];
+            case 4:
+                visitRepo = _a.sent();
+                return [4 /*yield*/, visitRepo.insert(visits)];
+            case 5:
+                visitInsertRes = _a.sent();
+                return [4 /*yield*/, typeorm_1.getRepository(Question_1.Question)];
+            case 6:
+                questionRepo = _a.sent();
+                return [4 /*yield*/, questionRepo.insert(qs)];
+            case 7:
+                questionInsertRes = _a.sent();
+                return [4 /*yield*/, typeorm_1.getRepository(SubQuestion_1.SubQuestion)];
+            case 8:
+                subQuestionRepo = _a.sent();
+                return [4 /*yield*/, subQuestionRepo.insert(subqs)];
+            case 9:
+                subQuestionInsertRes = _a.sent();
                 senderSocket.emit('transfer-result', {
                     ok: true,
-                    visit: visits,
-                    question: qs,
-                    subquestion: subqs,
+                    visit: visitInsertRes,
+                    question: questionInsertRes,
+                    subquestion: subQuestionInsertRes,
                 });
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 11];
+            case 10:
                 e_1 = _a.sent();
                 senderSocket.emit('transfer-error', {
                     ok: false,
                     error: e_1,
                     msg: 'error_during_transfer',
                 });
-                return [3 /*break*/, 5];
-            case 5: return [3 /*break*/, 7];
-            case 6:
+                return [3 /*break*/, 11];
+            case 11: return [3 /*break*/, 13];
+            case 12:
                 res.status(400).json({
                     ok: false,
                     msg: "no_sender_socet_with_id_" + socketId,
                     status: 400,
                 });
-                _a.label = 7;
-            case 7: return [3 /*break*/, 9];
-            case 8:
+                _a.label = 13;
+            case 13: return [3 /*break*/, 15];
+            case 14:
                 res.status(400).json({
                     ok: false,
                     msg: 'request_body_requires_docs',
                     status: 400,
                 });
-                _a.label = 9;
-            case 9: return [2 /*return*/];
+                _a.label = 15;
+            case 15: return [2 /*return*/];
         }
     });
 }); });

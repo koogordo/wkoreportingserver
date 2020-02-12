@@ -2,12 +2,12 @@
 var workerpool = require('workerpool');
 var PouchDB = require('pouchdb');
 var pouchCollate = require('pouchdb-collate');
-var familiesDB = new PouchDB("https://admin:wK0mI55ghBU9pp@hfatracking.net/couchdb/families");
+var familiesDB = new PouchDB("http://admin:admin@localhost:5984/families");
 function createInsertVisitDtoWithoutSession(visit, familiesDB) {
     var insertDto;
     var visitOs;
     if (visit.form.status && visit.form.status.length > 0) {
-        var openStatus = visit.form.status.find(function (stat) { return stat.value === 'open'; });
+        var openStatus = visit.form.status.find(function (stat) { return stat.value === 'open' || stat.value === 'submitted'; });
         if (openStatus) {
             visitOs = openStatus.username;
         }
@@ -38,11 +38,11 @@ function createInsertVisitDtoWithoutSession(visit, familiesDB) {
                 legacyClientID = idMap.oldId;
             }
             else {
-                legacyClientID = null;
+                legacyClientID = -9999;
             }
         }
         else {
-            legacyClientID = null;
+            legacyClientID = -9999;
         }
         insertDto = {
             visitID: visit._id,
@@ -83,9 +83,9 @@ function generateSQLSubQuestionRows(questions) {
                 }
                 qToSubQRels.push({
                     parentVisitVisitID: questions[parentQuestionIndex].visitVisitID,
-                    parentQuestionKey: questions[parentQuestionIndex].questionKey,
+                    parentQuestionKey: questions[parentQuestionIndex].questionKey || '',
                     subQuestionVisitVisitID: questions[i].visitVisitID,
-                    subQuestionQuestionKey: questions[i].questionKey,
+                    subQuestionQuestionKey: questions[i].questionKey || '',
                 });
             }
         }
@@ -264,7 +264,7 @@ function parseQuestion(visitID, index, question) {
                 visitVisitID: visitID,
                 questionKey: question.key,
                 questionAnswer: 'ISQ',
-                questionType: question.type,
+                questionType: question.type || '',
                 formIndexJSON: JSON.stringify(index),
                 questionJSON: JSON.stringify(question),
                 inputJSON: JSON.stringify(question.input),
@@ -277,7 +277,7 @@ function parseQuestion(visitID, index, question) {
                 visitVisitID: visitID,
                 questionKey: question.key,
                 questionAnswer: 'ISQ',
-                questionType: question.type,
+                questionType: question.type || '',
                 formIndexJSON: JSON.stringify(index),
                 questionJSON: JSON.stringify(question),
                 inputJSON: '',
@@ -299,8 +299,8 @@ function parseQuestion(visitID, index, question) {
             return {
                 visitVisitID: visitID,
                 questionKey: question.key,
-                questionAnswer: question.input,
-                questionType: question.type,
+                questionAnswer: question.input || '',
+                questionType: question.type || '',
                 formIndexJSON: JSON.stringify(index),
                 questionJSON: JSON.stringify(question),
                 inputJSON: '',
@@ -312,8 +312,8 @@ function parseQuestion(visitID, index, question) {
             return {
                 visitVisitID: visitID,
                 questionKey: question.key,
-                questionAnswer: question.input,
-                questionType: question.type,
+                questionAnswer: question.input || '',
+                questionType: question.type || '',
                 formIndexJSON: JSON.stringify(index),
                 questionJSON: JSON.stringify(question),
                 inputJSON: '',

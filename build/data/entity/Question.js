@@ -37,11 +37,11 @@ var Question = /** @class */ (function () {
         __metadata("design:type", String)
     ], Question.prototype, "formIndexJSON", void 0);
     __decorate([
-        typeorm_1.Column('varchar', { length: 5000, unique: false }),
+        typeorm_1.Column('text'),
         __metadata("design:type", String)
     ], Question.prototype, "questionJSON", void 0);
     __decorate([
-        typeorm_1.Column('varchar', { length: 5000, unique: false }),
+        typeorm_1.Column('text'),
         __metadata("design:type", String)
     ], Question.prototype, "inputJSON", void 0);
     __decorate([

@@ -41,8 +41,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var typeorm_1 = require("typeorm");
+var JwtMiddleware_1 = require("../../middleware/JwtMiddleware");
 var QueryController = express_1.default.Router();
-QueryController.post('/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+QueryController.post('/', [JwtMiddleware_1.checkJwt, JwtMiddleware_1.checkRole('ADMIN')], function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var socketId, io, senderSocket, manager, result, e_1;
     return __generator(this, function (_a) {
         switch (_a.label) {

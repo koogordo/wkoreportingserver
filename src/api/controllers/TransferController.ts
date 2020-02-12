@@ -9,11 +9,13 @@ import * as _ from 'lodash'
 import { PlatformTools } from 'typeorm/platform/PlatformTools'
 import { Visit } from '../../data/entity/Visit'
 import { SubQuestion } from '../../data/entity/SubQuestion'
+import { checkJwt, checkRole } from '../../middleware/JwtMiddleware'
 const dao = new WKODbAccess(DbConfig)
 const TransferController = express.Router()
 
 TransferController.post(
     '/',
+    [checkJwt, checkRole('ADMIN')],
     async (req: express.Request, res: express.Response) => {
         const socketId = req.body.socketid
         const io = req.app.get('socketio')
@@ -31,6 +33,7 @@ TransferController.post(
                         .forms()
                         .findAll({ include_docs: true })
                     const batches = _.chunk(req.body.docs, 3)
+
                     const pool = workerpool.pool(
                         __dirname +
                             '/../../worker-scripts/processBatchWorker.js',
@@ -49,6 +52,7 @@ TransferController.post(
                     parsedVisitInfo = parsedVisitInfo.filter(r => {
                         return r !== undefined && r !== null
                     })
+
                     let visits: any[] = []
                     let qs: any[] = []
                     let subqs: any[] = []
@@ -67,18 +71,39 @@ TransferController.post(
                             }
                         }
                     }
-                    let visitInsertRes: InsertResult
-                    let questionInsertRes: InsertResult
-                    let subQuestionInsertRes: InsertResult
-
-                    const visitRepo = await getRepository(Visit)
-                    visitInsertRes = await visitRepo.insert(visits)
-
-                    const questionRepo = await getRepository(Question)
-                    questionInsertRes = await questionRepo.insert(qs)
-
-                    const subQuestionRepo = await getRepository(SubQuestion)
-                    subQuestionInsertRes = await subQuestionRepo.insert(subqs)
+                    let visitInsertRes: any
+                    let questionInsertRes: any
+                    let subQuestionInsertRes: any
+                    if (visits.length > 0) {
+                        const visitRepo = await getRepository(Visit)
+                        visitInsertRes = await visitRepo.insert(visits)
+                    } else {
+                        visitInsertRes = {
+                            ok: true,
+                            msg: 'no visits so visits were ignored',
+                        }
+                    }
+                    if (qs.length > 0) {
+                        const questionRepo = await getRepository(Question)
+                        questionInsertRes = await questionRepo.insert(qs)
+                    } else {
+                        questionInsertRes = {
+                            ok: true,
+                            msg: 'no questions so questions were ignored',
+                        }
+                    }
+                    if (subqs.length > 0) {
+                        const subQuestionRepo = await getRepository(SubQuestion)
+                        subQuestionInsertRes = await subQuestionRepo.insert(
+                            subqs
+                        )
+                    } else {
+                        subQuestionInsertRes = {
+                            ok: true,
+                            msg:
+                                'no sub_questions so sub_questions were ignored',
+                        }
+                    }
 
                     senderSocket.emit('transfer-result', {
                         ok: true,

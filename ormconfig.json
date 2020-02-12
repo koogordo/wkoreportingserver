@@ -4,7 +4,7 @@
    "port": 3306,
    "username": "root",
    "password": "GBP@ck3rs#1",
-   "database": "wkohfatracking2",
+   "database": "wkohfatracking3",
    "synchronize": true,
    "logging": false,
    "entities": [

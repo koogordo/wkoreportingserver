@@ -1,18 +1,17 @@
 const workerpool = require('workerpool');
 const PouchDB = require('pouchdb');
 const pouchCollate = require('pouchdb-collate');
-const familiesDB = new PouchDB(`https://admin:wK0mI55ghBU9pp@hfatracking.net/couchdb/families`)
+const familiesDB = new PouchDB(`http://admin:admin@localhost:5984/families`)
 
 function createInsertVisitDtoWithoutSession(
     visit,
     familiesDB
 ) {
-    
         let insertDto;
         let visitOs;
         if (visit.form.status && visit.form.status.length > 0) {
             const openStatus = visit.form.status.find(
-                (stat) => stat.value === 'open'
+                (stat) => { return stat.value === 'open' || stat.value === 'submitted' }
             );
 
             if (openStatus) {
@@ -109,14 +108,15 @@ function generateSQLSubQuestionRows(
                             '-' +
                             questions[parentQuestionIndex].questionKey;
                     }
+
                     qToSubQRels.push({
                         parentVisitVisitID:
                             questions[parentQuestionIndex].visitVisitID,
                         parentQuestionKey:
-                            questions[parentQuestionIndex].questionKey,
+                            questions[parentQuestionIndex].questionKey || '',
 
                         subQuestionVisitVisitID: questions[i].visitVisitID,
-                        subQuestionQuestionKey: questions[i].questionKey,
+                        subQuestionQuestionKey: questions[i].questionKey || '',
                     });
                 }
             }
