@@ -1,10 +1,10 @@
 {
    "type": "mysql",
-   "host": "localhost",
+   "host": "wkohfatrackingsql.mysql.database.azure.com",
    "port": 3306,
-   "username": "root",
-   "password": "GBP@ck3rs#1",
-   "database": "wkohfatracking3",
+   "username": "wko@wkohfatrackingsql",
+   "password": "wK0mI55ghBU9pp",
+   "database": "wkohfatracking",
    "synchronize": true,
    "logging": false,
    "entities": [
