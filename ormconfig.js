@@ -1,4 +1,4 @@
-import * as fs from'fs';
+const fs = require('fs');
 module.exports = {
    "type": "mysql",
    "host": "wkohfatrackingsql.mysql.database.azure.com",
