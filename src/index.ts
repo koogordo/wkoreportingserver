@@ -5,6 +5,7 @@ import { configureRoutes } from './routes'
 import express from 'express'
 import cors from 'cors'
 import * as socketIo from 'socket.io'
+import * as fs from 'fs'
 //controllers
 
 createConnection()
