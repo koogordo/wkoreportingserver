@@ -11,6 +11,7 @@ import { Question } from './Question'
             .addSelect('visit.clientID', 'clientID')
             .addSelect('visit.visitDate', 'visitDate')
             .addSelect('visit.visitOs', 'visitOs')
+            .addSelect('visit.familyID', 'familyID')
             .addSelect('visit.clientFullName', 'clientFullName')
             .addSelect('visit.legacyClientID', 'legacyClientID')
             .addSelect('question.questionKey', 'questionKey')
@@ -43,6 +44,9 @@ export class VisitQuestion {
 
     @ViewColumn()
     visitOs!: string
+
+    @ViewColumn()
+    familyID!: string
 
     @ViewColumn()
     clientFullName!: string
