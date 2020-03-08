@@ -46,6 +46,9 @@ export class VisitQuestion {
     visitOs!: string
 
     @ViewColumn()
+    familyID!: string
+
+    @ViewColumn()
     clientFullName!: string
 
     @ViewColumn()
