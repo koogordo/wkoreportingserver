@@ -1,7 +1,7 @@
 const workerpool = require('workerpool');
 const PouchDB = require('pouchdb');
 const pouchCollate = require('pouchdb-collate');
-const familiesDB = new PouchDB(`http://admin:admin@localhost:5984/families`)
+const familiesDB = new PouchDB(`https://admin:wK0mI55ghBU9pp@hfatracking.net/couchdb/families`)
 
 function createInsertVisitDtoWithoutSession(
     visit,
