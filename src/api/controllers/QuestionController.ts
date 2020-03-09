@@ -78,7 +78,7 @@ QuestionController.post(
     '/',
     async (req: express.Request, res: express.Response) => {
         const repo = getRepository(Question)
-        console.log(req.body.rows)
+
         try {
             await getConnection()
                 .createQueryBuilder()

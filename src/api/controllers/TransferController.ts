@@ -36,7 +36,6 @@ TransferController.post(
                         .forms()
                         .findAll({ include_docs: true })
                     const batches = _.chunk(req.body.docs, 3)
-                    console.log(batches)
                     const pool = workerpool.pool(
                         __dirname +
                             '/../../worker-scripts/processBatchWorker.js',
@@ -77,18 +76,18 @@ TransferController.post(
                     let visitInsertRes: any
                     let questionInsertRes: any
                     let subQuestionInsertRes: any
-                    console.log({ visits, qs, subqs })
-                    const db = new PouchDB(`${DbConfig.domain}/aaa`)
+                    // console.log({ visits, qs, subqs })
+                    // const db = new PouchDB(`${DbConfig.domain}/aaa`)
 
-                    const putRes = await db.put({
-                        _id: crypto.randomBytes(50).toString('hex'),
-                        visits,
-                        qs,
-                        subqs,
-                    })
-                    if (!putRes.ok) {
-                        throw putRes
-                    }
+                    // const putRes = await db.put({
+                    //     _id: crypto.randomBytes(50).toString('hex'),
+                    //     visits,
+                    //     qs,
+                    //     subqs,
+                    // })
+                    // if (!putRes.ok) {
+                    //     throw putRes
+                    // }
                     if (visits.length > 0) {
                         const visitRepo = await getRepository(Visit)
                         visitInsertRes = await visitRepo.insert(visits)
