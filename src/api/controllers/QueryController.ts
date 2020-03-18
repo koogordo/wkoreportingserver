@@ -6,7 +6,7 @@ const QueryController = express.Router()
 
 QueryController.post(
     '/',
-    [checkJwt, checkRole('ADMIN')],
+    [checkJwt],
     async (req: express.Request, res: express.Response) => {
         const socketId = req.body.socketid
         const io = req.app.get('socketio')

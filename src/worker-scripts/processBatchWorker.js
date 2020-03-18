@@ -2,7 +2,7 @@ const workerpool = require('workerpool');
 const PouchDB = require('pouchdb');
 const pouchCollate = require('pouchdb-collate');
 const familiesDB = new PouchDB(`https://admin:wK0mI55ghBU9pp@hfatracking.net/couchdb/families`)
-
+const crypto = require('crypto');
 function createInsertVisitDtoWithoutSession(
     visit,
     familiesDB
@@ -569,6 +569,142 @@ function findFormPartByIndex(fgValue, indexc){
         return null;
     }
 }
+
+ function traverseAndUniqueifyQuestionArray(formComponent, parentOption = null) {
+        if (formComponent.tabs) {
+            for (let i = 0; i < formComponent.tabs.length; i++) {
+                traverseAndUniqueifyQuestionArray(formComponent.tabs[i], parentOption);
+            }
+        } else if (formComponent.sections) {
+            for (let i = 0; i < formComponent.sections.length; i++) {
+                traverseAndUniqueifyQuestionArray(
+                    formComponent.sections[i],
+                    parentOption
+                );
+            }
+        } else if (formComponent.rows || formComponent.options) {
+            if (formComponent.key && formComponent.type) {
+                // form component is question
+                if (parentOption && (formComponent.key === "Other Reason" || formComponent.key === "Other")) {
+                    formComponent.key = formComponent.key + '-' + parentOption.key;
+                }
+                if (formComponent.type === 'question-array') {
+                    for (let i = 0; i < formComponent.input.length; i++) {
+                        formComponent.input[i] = setNewItemQuestionKeys(
+                            formComponent.input[i]
+                        );
+                        traverseAndUniqueifyQuestionArray(
+                            formComponent.input[i],
+                            parentOption
+                        );
+                    }
+                }
+
+                if (formComponent.options) {
+                    for (let i = 0; i < formComponent.options.length; i++) {
+                        if (formComponent.options[i].specify) {
+                            parentOption = formComponent.options[i];
+                        }
+                        traverseAndUniqueifyQuestionArray(
+                            formComponent.options[i],
+                            parentOption
+                        );
+                        parentOption = null;
+                    }
+                }
+                // is a question group
+                if (formComponent.type === 'question-group') {
+                    for (let i = 0; i < formComponent.rows.length; i++) {
+                        traverseAndUniqueifyQuestionArray(
+                            formComponent.rows[i],
+                            parentOption
+                        );
+                    }
+                }
+            } else {
+                // the form component is a question with options
+                for (let i = 0; i < formComponent.rows.length; i++) {
+                    traverseAndUniqueifyQuestionArray(
+                        formComponent.rows[i],
+                        parentOption
+                    );
+                }
+            }
+        } else if (formComponent.columns) {
+            for (let i = 0; i < formComponent.columns.length; i++) {
+                traverseAndUniqueifyQuestionArray(
+                    formComponent.columns[i],
+                    parentOption
+                );
+            }
+        } else if (formComponent.questions) {
+            for (let i = 0; i < formComponent.questions.length; i++) {
+                traverseAndUniqueifyQuestionArray(
+                    formComponent.questions[i],
+                    parentOption
+                );
+            }
+        } else if (formComponent.type && formComponent.key) {
+            if (parentOption && (formComponent.key === "Other Reason" || formComponent.key === "Other")) {
+                formComponent.key = formComponent.key + '-' + parentOption.key;
+            }
+            if (formComponent.type === 'question-array') {
+                for (let i = 0; i < formComponent.input.length; i++) {
+                    formComponent.input[i] = setNewItemQuestionKeys(
+                        formComponent.input[i]
+                    );
+                    traverseAndUniqueifyQuestionArray(
+                        formComponent.input[i],
+                        parentOption
+                    );
+                }
+            }
+        }
+        return formComponent;
+    }
+
+    function setNewItemQuestionKeys(group) {
+        for (const row of group.rows) {
+            for (const col of row.columns) {
+                for (const question of col.questions) {
+                    const keyBody = crypto.randomBytes(10).toString('hex');
+
+                    question.key = question.key + '-' + keyBody;
+                    if (
+                        question.rows &&
+                        question.rows.length > 0 &&
+                        question.type !== 'question-array'
+                    ) {
+                        setNewItemQuestionKeys(question);
+                    } else if (question.options) {
+                        for (let i = 0; i < question.options.length; i++) {
+                            if (
+                                question.options[i].rows &&
+                                question.options[i].rows.length > 0
+                            ) {
+                                setNewItemQuestionKeys(
+                                    question.options[i]
+                                );
+                            }
+                        }
+                    } else if (
+                        question.rows &&
+                        question.type === 'question-array'
+                    ) {
+                        for (let i = 0; i < question.input.length; i++) {
+                            if (
+                                question.input[i].rows &&
+                                question.input[i].rows.length > 0
+                            ) {
+                                setNewItemQuestionKeys(question.input[i]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return group;
+    }
 function expand(templateFormDoc, compressedForm) {
 
         const formCopy = JSON.parse(JSON.stringify(templateFormDoc));
@@ -597,6 +733,10 @@ function expand(templateFormDoc, compressedForm) {
                 }
             } else {
                 formPart.input = question.value;
+                if (formPart.key === 'Other Reason') {
+                    formPart.key = formPart.key + '-' + crypto.randomBytes(10).toString('hex');
+                }
+                
             }
             formPart.notes = question.notes;
             formPart.usePreviousValue = question.usePreviousValue;
@@ -650,6 +790,12 @@ function expandBatch(batch, templateMap) {
         );
     });
 }
+function uniqueifyKeys(expandedBatch) {
+    return expandedBatch.map(doc => {
+        doc.form = traverseAndUniqueifyQuestionArray(doc.form);
+            return doc;
+    })
+}
 function createVisits(batch) {
     return batch.map((visitDoc) => {
         return createInsertVisitDtoWithoutSession(
@@ -688,7 +834,7 @@ function processBatch(docs, templateDocs) {
     if (batch.length > 0) {
      
         expandedBatch = expandBatch(batch, templateMap);
-      
+        uniqueKeyBatch = uniqueifyKeys(expandedBatch);
         const visitPromises = createVisits(batch);
         const qssubqs = qsAndSubQs(expandedBatch);
         return Promise.all(visitPromises).then(visitRows => {
