@@ -832,9 +832,8 @@ function processBatch(docs, templateDocs) {
     let expandedBatch;
     batch = cleanBatch(docs);
     if (batch.length > 0) {
-     
         expandedBatch = expandBatch(batch, templateMap);
-        uniqueKeyBatch = uniqueifyKeys(expandedBatch);
+        // uniqueKeyBatch = uniqueifyKeys(expandedBatch);
         const visitPromises = createVisits(batch);
         const qssubqs = qsAndSubQs(expandedBatch);
         return Promise.all(visitPromises).then(visitRows => {
