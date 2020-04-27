@@ -585,9 +585,9 @@ function findFormPartByIndex(fgValue, indexc){
         } else if (formComponent.rows || formComponent.options) {
             if (formComponent.key && formComponent.type) {
                 // form component is question
-                if (parentOption && (formComponent.key === "Other Reason" || formComponent.key === "Other")) {
-                    formComponent.key = formComponent.key + '-' + parentOption.key;
-                }
+                // if (parentOption && (formComponent.key === "Other Reason" || formComponent.key === "Other")) {
+                //     formComponent.key = formComponent.key + '-' + parentOption.key;
+                // }
                 if (formComponent.type === 'question-array') {
                     for (let i = 0; i < formComponent.input.length; i++) {
                         formComponent.input[i] = setNewItemQuestionKeys(
@@ -669,7 +669,7 @@ function findFormPartByIndex(fgValue, indexc){
                 for (const question of col.questions) {
                     const keyBody = crypto.randomBytes(10).toString('hex');
 
-                    question.key = question.key + '-' + keyBody;
+                    question.key = question.key.split("-")[0] + '-' + keyBody;
                     if (
                         question.rows &&
                         question.rows.length > 0 &&
@@ -833,7 +833,7 @@ function processBatch(docs, templateDocs) {
     batch = cleanBatch(docs);
     if (batch.length > 0) {
         expandedBatch = expandBatch(batch, templateMap);
-        uniqueKeyBatch = uniqueifyKeys(expandedBatch);
+        // uniqueKeyBatch = uniqueifyKeys(expandedBatch);
         const visitPromises = createVisits(batch);
         const qssubqs = qsAndSubQs(expandedBatch);
         return Promise.all(visitPromises).then(visitRows => {
