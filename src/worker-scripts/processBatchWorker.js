@@ -831,6 +831,7 @@ function processBatch(docs, templateDocs) {
     let batch;
     let expandedBatch;
     batch = cleanBatch(docs);
+    console.log(batch);
     if (batch.length > 0) {
         expandedBatch = expandBatch(batch, templateMap);
         uniqueKeyBatch = uniqueifyKeys(expandedBatch);
