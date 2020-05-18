@@ -829,10 +829,13 @@ function processBatch(docs, templateDocs) {
                 templateMap.set(doc.form.name, doc);
         }
     });
+    console.log("COMPLETED CREATING TEMPLATE MAP");
     let batch = docs;
     let expandedBatch;
     if (batch.length > 0) {
+        console.log("ABOUT TO EXPAND BATCH");
         expandedBatch = expandBatch(batch, templateMap);
+        console.log("BATCH EXPANDED");
         uniqueKeyBatch = uniqueifyKeys(expandedBatch);
         const visitPromises = createVisits(batch);
         const qssubqs = qsAndSubQs(uniqueKeyBatch);
