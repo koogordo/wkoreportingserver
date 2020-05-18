@@ -822,6 +822,7 @@ function qsAndSubQs(expandedBatch) {
 function processBatch(docs, templateDocs) {
     // let map = JSON.parse(templateMap);
     // console.log(map['Adult Visit'])
+    console.log("STARTED PROCESSING BATCH");
     let templateMap = new Map();
     templateDocs.forEach((doc) => {
         if (!templateMap.has(doc.form.name)) {
@@ -833,9 +834,6 @@ function processBatch(docs, templateDocs) {
     if (batch.length > 0) {
         expandedBatch = expandBatch(batch, templateMap);
         uniqueKeyBatch = uniqueifyKeys(expandedBatch);
-        if (uniqueKeyBatch[0].form.contents) {
-            console.log("THIS FORM DID NOT GET EXPECTED")
-        }
         const visitPromises = createVisits(batch);
         const qssubqs = qsAndSubQs(uniqueKeyBatch);
         return Promise.all(visitPromises).then(visitRows => {
