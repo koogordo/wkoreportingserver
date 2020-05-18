@@ -792,10 +792,11 @@ function expandBatch(batch, templateMap) {
 }
 function uniqueifyKeys(expandedBatch) {
     return expandedBatch.map(doc => {
-        console.log("ABOUT TO TRAVERSE DOC")
+        console.log("ABOUT TO TRAVERSE DOC");
         doc.form = traverseAndUniqueifyQuestionArray(doc.form);
-        console.log("DOC TRAVERSED")
-            return doc;
+        console.log("DOC TRAVERSED");
+        console.log(doc);
+        return doc;
     })
 }
 function createVisits(batch) {
