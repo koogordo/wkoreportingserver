@@ -828,7 +828,7 @@ function processBatch(docs, templateDocs) {
                 templateMap.set(doc.form.name, doc);
         }
     });
-    let batch;
+    let batch = docs;
     let expandedBatch;
     if (batch.length > 0) {
         expandedBatch = expandBatch(batch, templateMap);
