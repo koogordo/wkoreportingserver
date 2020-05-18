@@ -833,7 +833,9 @@ function processBatch(docs, templateDocs) {
     if (batch.length > 0) {
         expandedBatch = expandBatch(batch, templateMap);
         uniqueKeyBatch = uniqueifyKeys(expandedBatch);
-        console.log(uniqueKeyBatch);
+        if (uniqueKeyBatch[0].form.contents) {
+            console.log("THIS FORM DID NOT GET EXPECTED")
+        }
         const visitPromises = createVisits(batch);
         const qssubqs = qsAndSubQs(uniqueKeyBatch);
         return Promise.all(visitPromises).then(visitRows => {
