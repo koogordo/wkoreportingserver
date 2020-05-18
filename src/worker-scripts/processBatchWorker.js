@@ -837,10 +837,14 @@ function processBatch(docs, templateDocs) {
         expandedBatch = expandBatch(batch, templateMap);
         console.log("BATCH EXPANDED");
         uniqueKeyBatch = uniqueifyKeys(expandedBatch);
+        console.log("KEYS MADE UNIQUE");
         const visitPromises = createVisits(batch);
+        console.log("VISITS CREATED");
         const qssubqs = qsAndSubQs(uniqueKeyBatch);
+        console.log("QUESTIONS AND SUBQUESTION DISCOVERED")
         return Promise.all(visitPromises).then(visitRows => {
             // LET main thread know we are done and return results;
+            console.log(`VISIT PROMISES RESOLVED WITH LENGTH ${visitRows.length}`);
             return {
                 visits: visitRows,
                 qssubqs
