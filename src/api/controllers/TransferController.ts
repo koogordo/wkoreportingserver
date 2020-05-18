@@ -126,6 +126,7 @@ TransferController.post(
                         subquestion: subQuestionInsertRes,
                     })
                 } catch (e) {
+                    console.log(e);
                     senderSocket.emit('transfer-error', {
                         ok: false,
                         error: e,

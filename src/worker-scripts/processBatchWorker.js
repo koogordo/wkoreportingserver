@@ -792,10 +792,7 @@ function expandBatch(batch, templateMap) {
 }
 function uniqueifyKeys(expandedBatch) {
     return expandedBatch.map(doc => {
-        console.log("ABOUT TO TRAVERSE DOC");
         doc.form = traverseAndUniqueifyQuestionArray(doc.form);
-        console.log("DOC TRAVERSED");
-        console.log(doc);
         return doc;
     })
 }
@@ -823,8 +820,6 @@ function qsAndSubQs(expandedBatch) {
     );
 }
 function processBatch(docs, templateDocs) {
-    // let map = JSON.parse(templateMap);
-    // console.log(map['Adult Visit'])
     console.log("STARTED PROCESSING BATCH");
     let templateMap = new Map();
     templateDocs.forEach((doc) => {
