@@ -820,29 +820,20 @@ function qsAndSubQs(expandedBatch) {
     );
 }
 function processBatch(docs, templateDocs) {
-    console.log("STARTED PROCESSING BATCH");
     let templateMap = new Map();
     templateDocs.forEach((doc) => {
         if (!templateMap.has(doc.form.name)) {
                 templateMap.set(doc.form.name, doc);
         }
     });
-    console.log("COMPLETED CREATING TEMPLATE MAP");
     let batch = docs;
     let expandedBatch;
     if (batch.length > 0) {
-        console.log("ABOUT TO EXPAND BATCH");
         expandedBatch = expandBatch(batch, templateMap);
-        console.log("BATCH EXPANDED");
-        uniqueKeyBatch = uniqueifyKeys(expandedBatch);
-        console.log("KEYS MADE UNIQUE");
+        let uniqueKeyBatch = uniqueifyKeys(expandedBatch);
         const visitPromises = createVisits(batch);
-        console.log("VISITS CREATED");
         const qssubqs = qsAndSubQs(uniqueKeyBatch);
-        console.log("QUESTIONS AND SUBQUESTION DISCOVERED")
         return Promise.all(visitPromises).then(visitRows => {
-            // LET main thread know we are done and return results;
-            console.log(`VISIT PROMISES RESOLVED WITH LENGTH ${visitRows.length}`);
             return {
                 visits: visitRows,
                 qssubqs
