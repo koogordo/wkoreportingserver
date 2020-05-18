@@ -830,13 +830,12 @@ function processBatch(docs, templateDocs) {
     });
     let batch;
     let expandedBatch;
-    batch = cleanBatch(docs);
-    console.log(batch);
     if (batch.length > 0) {
         expandedBatch = expandBatch(batch, templateMap);
         uniqueKeyBatch = uniqueifyKeys(expandedBatch);
+        console.log(uniqueKeyBatch);
         const visitPromises = createVisits(batch);
-        const qssubqs = qsAndSubQs(expandedBatch);
+        const qssubqs = qsAndSubQs(uniqueKeyBatch);
         return Promise.all(visitPromises).then(visitRows => {
             // LET main thread know we are done and return results;
             return {
